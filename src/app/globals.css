@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F8F9FA;
+  --foreground: #1F2421;
+  
+  --color-gira-green: #1B8A5A; /* Backup green if needed */
+  --color-gira-purple: #4A0E4E; /* Roxo profundo / Berry */
+  --color-gira-yellow: #FFB800; /* Dourado / Mel */
+  --color-gira-orange: #FF7A00; /* Laranja manga - Botão de ação */
+  --color-gira-pink: #E0528E; /* Rosa pitaya suave */
+  
+  --color-text-title: #1F2421;
+  --color-text-subtitle: #4B5563; /* Aumentar contraste do subtítulo */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-brand-green: var(--color-gira-green);
+  --color-brand-purple: var(--color-gira-purple);
+  --color-brand-yellow: var(--color-gira-yellow);
+  --color-brand-orange: var(--color-gira-orange);
+  --color-brand-pink: var(--color-gira-pink);
+  --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Cleaner gradients */
+.bg-gradient-gira {
+  background: linear-gradient(135deg, var(--color-gira-purple) 0%, var(--color-gira-pink) 100%);
+}
+
+.text-gradient-gira {
+  background: linear-gradient(90deg, var(--color-gira-purple), var(--color-gira-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
