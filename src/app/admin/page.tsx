@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 
 export default function Admin() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'clientes' | 'configuracoes'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'clientes' | 'entregadores' | 'configuracoes'>('dashboard');
 
   // Store Settings state
   const [storeIsOpen, setStoreIsOpen] = useState(true);
@@ -36,6 +36,12 @@ export default function Admin() {
     { id: 'c3', name: 'Guilherme Mendes', phone: '(11) 97711-2233', totalOrders: 8, totalSpent: 260.00, lastOrder: '26/09/2026' },
     { id: 'c4', name: 'Giovanna Esteves', phone: '(11) 96655-4433', totalOrders: 15, totalSpent: 512.90, lastOrder: '26/09/2026' },
   ];
+
+  // Mock Drivers Data
+  const [drivers, setDrivers] = useState([
+    { id: 'd1', name: 'Carlos Motoboy', phone: '(11) 99999-1111', vehicle: 'Moto Honda CG', licensePlate: 'ABC-1234', status: 'online' },
+    { id: 'd2', name: 'Roberto Entregas', phone: '(11) 98888-2222', vehicle: 'Moto Yamaha', licensePlate: 'XYZ-9876', status: 'offline' },
+  ]);
 
   // Mock hourly peak data for chart
   const hourlyData = [
@@ -93,6 +99,16 @@ export default function Admin() {
               }`}
             >
               <Users size={18} /> Clientes
+            </button>
+            <button 
+              onClick={() => setActiveTab('entregadores')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                activeTab === 'entregadores' 
+                  ? 'bg-brand-purple text-white shadow-md shadow-brand-purple/20' 
+                  : 'text-[#4B5563] hover:text-brand-purple hover:bg-gray-50'
+              }`}
+            >
+              <Bike size={18} /> Entregadores
             </button>
             <button 
               onClick={() => setActiveTab('configuracoes')}
@@ -258,6 +274,74 @@ export default function Admin() {
                           <button className="bg-[#25D366] text-white px-3 py-1 rounded-lg font-bold text-xs hover:opacity-90 transition-opacity flex items-center gap-1 ml-auto">
                             <Phone size={12} /> WhatsApp
                           </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2.5: ENTREGADORES */}
+        {activeTab === 'entregadores' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-[#1F2421]">Entregadores</h1>
+                <p className="text-sm text-[#4B5563]">Gerencie sua equipe de entregas (Motoboys)</p>
+              </div>
+              <button onClick={() => alert('Simulação: Adicionar novo entregador')} className="bg-brand-orange text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-brand-orange/90 transition-colors shadow-sm">
+                + Novo Entregador
+              </button>
+            </div>
+
+            <div className="bg-white border border-gray-100 shadow-sm rounded-2xl overflow-hidden">
+              <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h2 className="text-xl font-bold text-[#1F2421]">Equipe Cadastrada</h2>
+                <div className="relative w-64">
+                  <input 
+                    type="text" 
+                    placeholder="Buscar por nome ou placa..." 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 px-4 pl-9 text-xs text-[#1F2421] focus:outline-none focus:border-brand-purple"
+                  />
+                  <Search className="absolute left-3 top-2.5 text-gray-400" size={14} />
+                </div>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 text-[#4B5563] text-sm border-b border-gray-100">
+                    <tr>
+                      <th className="px-6 py-4 font-semibold">Nome</th>
+                      <th className="px-6 py-4 font-semibold">Telefone</th>
+                      <th className="px-6 py-4 font-semibold">Veículo</th>
+                      <th className="px-6 py-4 font-semibold">Placa</th>
+                      <th className="px-6 py-4 font-semibold">Status</th>
+                      <th className="px-6 py-4 font-semibold text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 text-sm">
+                    {drivers.map(d => (
+                      <tr key={d.id} className="hover:bg-gray-50/80 transition-colors">
+                        <td className="px-6 py-4 font-bold text-[#1F2421]">{d.name}</td>
+                        <td className="px-6 py-4 text-[#4B5563] font-medium">{d.phone}</td>
+                        <td className="px-6 py-4 text-[#4B5563] font-medium">{d.vehicle}</td>
+                        <td className="px-6 py-4 font-mono font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded inline-block mt-3 ml-6">{d.licensePlate}</td>
+                        <td className="px-6 py-4">
+                          {d.status === 'online' ? (
+                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 w-max">
+                              <span className="w-2 h-2 rounded-full bg-green-500"></span> Online
+                            </span>
+                          ) : (
+                            <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 w-max">
+                              <span className="w-2 h-2 rounded-full bg-gray-400"></span> Offline
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button onClick={() => alert(`Editar ${d.name}`)} className="text-brand-purple hover:underline font-bold text-xs mr-3">Editar</button>
                         </td>
                       </tr>
                     ))}

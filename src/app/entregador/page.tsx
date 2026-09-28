@@ -105,18 +105,6 @@ export default function EntregadorApp() {
               <LogOut size={20} />
             </Link>
           </div>
-
-          {/* KPI Mini Dashboard */}
-          <div className="flex gap-4 bg-black/20 p-3 rounded-xl">
-            <div className="flex-1 text-center border-r border-white/20">
-              <p className="text-xs text-white/70">Entregas hoje</p>
-              <p className="font-bold text-lg">{finalizadas.length}</p>
-            </div>
-            <div className="flex-1 text-center">
-              <p className="text-xs text-white/70">Ganhos (R$ 5/taxa)</p>
-              <p className="font-bold text-lg text-green-300">R$ {(finalizadas.length * 5).toFixed(2).replace('.', ',')}</p>
-            </div>
-          </div>
         </header>
 
         {/* Content */}
