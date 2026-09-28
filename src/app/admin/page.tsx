@@ -14,6 +14,7 @@ import {
   Search,
   Phone,
   Save,
+  ToggleLeft,
   ToggleRight,
   Printer,
   Bike
