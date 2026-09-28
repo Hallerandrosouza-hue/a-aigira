@@ -14,9 +14,9 @@ import {
   Search,
   Phone,
   Save,
-  ToggleLeft,
   ToggleRight,
-  Printer
+  Printer,
+  Bike
 } from 'lucide-react';
 
 export default function Admin() {
@@ -59,6 +59,16 @@ export default function Admin() {
             >
               <div className="flex items-center gap-3">
                 <Package size={18} /> Pedidos
+              </div>
+            </Link>
+
+            <Link 
+              href="/entregador"
+              target="_blank"
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium text-[#4B5563] hover:text-brand-orange hover:bg-orange-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <Bike size={18} /> App do Entregador
               </div>
             </Link>
 

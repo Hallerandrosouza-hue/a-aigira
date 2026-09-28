@@ -264,6 +264,17 @@ export default function Pedidos() {
                 </span>
               )}
             </Link>
+            
+            <Link 
+              href="/entregador"
+              target="_blank"
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium text-[#4B5563] hover:text-brand-orange hover:bg-orange-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <Bike size={18} /> App do Entregador
+              </div>
+            </Link>
+
             <Link href="/admin" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-[#4B5563] hover:text-brand-purple hover:bg-gray-50 transition-colors">
               <LayoutDashboard size={18} /> Dashboard
             </Link>
