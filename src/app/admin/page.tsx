@@ -27,6 +27,9 @@ import {
 export default function Admin() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'clientes' | 'entregadores' | 'produtos' | 'configuracoes'>('dashboard');
   const [productSubTab, setProductSubTab] = useState<'prontos' | 'acompanhamentos'>('prontos');
+  const [driverSubTab, setDriverSubTab] = useState<'lista' | 'cadastro'>('lista');
+  const [newDriver, setNewDriver] = useState({ name: '', phone: '', vehicle: '', licensePlate: '' });
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
 
   // Store Settings state
   const [storeIsOpen, setStoreIsOpen] = useState(true);
@@ -322,68 +325,239 @@ export default function Admin() {
         {/* TAB 2.5: ENTREGADORES */}
         {activeTab === 'entregadores' && (
           <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold text-[#1F2421]">Entregadores</h1>
-                <p className="text-sm text-[#4B5563]">Gerencie sua equipe de entregas (Motoboys)</p>
-              </div>
-              <button onClick={() => alert('Simulação: Adicionar novo entregador')} className="bg-brand-orange text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-brand-orange/90 transition-colors shadow-sm">
-                + Novo Entregador
+            <div>
+              <h1 className="text-3xl font-bold text-[#1F2421]">Entregadores</h1>
+              <p className="text-sm text-[#4B5563]">Gerencie e cadastre sua equipe de entregas (Motoboys)</p>
+            </div>
+
+            {/* Sub-tabs */}
+            <div className="flex bg-white rounded-xl shadow-sm border border-gray-100 p-1 w-max">
+              <button
+                onClick={() => { setDriverSubTab('lista'); setGeneratedLink(null); }}
+                className={`px-6 py-2 rounded-lg text-sm font-bold transition-colors ${
+                  driverSubTab === 'lista' ? 'bg-brand-purple text-white shadow' : 'text-gray-500 hover:text-gray-800'
+                }`}
+              >
+                Equipe Cadastrada
+              </button>
+              <button
+                onClick={() => { setDriverSubTab('cadastro'); setGeneratedLink(null); setNewDriver({ name: '', phone: '', vehicle: '', licensePlate: '' }); }}
+                className={`px-6 py-2 rounded-lg text-sm font-bold transition-colors ${
+                  driverSubTab === 'cadastro' ? 'bg-brand-purple text-white shadow' : 'text-gray-500 hover:text-gray-800'
+                }`}
+              >
+                + Cadastrar Novo Entregador
               </button>
             </div>
 
-            <div className="bg-white border border-gray-100 shadow-sm rounded-2xl overflow-hidden">
-              <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                <h2 className="text-xl font-bold text-[#1F2421]">Equipe Cadastrada</h2>
-                <div className="relative w-64">
-                  <input 
-                    type="text" 
-                    placeholder="Buscar por nome ou placa..." 
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 px-4 pl-9 text-xs text-[#1F2421] focus:outline-none focus:border-brand-purple"
-                  />
-                  <Search className="absolute left-3 top-2.5 text-gray-400" size={14} />
+            {/* SUB-TAB: LISTA */}
+            {driverSubTab === 'lista' && (
+              <div className="bg-white border border-gray-100 shadow-sm rounded-2xl overflow-hidden">
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-[#1F2421]">Equipe Cadastrada</h2>
+                  <div className="relative w-64">
+                    <input 
+                      type="text" 
+                      placeholder="Buscar por nome ou placa..." 
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 px-4 pl-9 text-xs text-[#1F2421] focus:outline-none focus:border-brand-purple"
+                    />
+                    <Search className="absolute left-3 top-2.5 text-gray-400" size={14} />
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead className="bg-gray-50 text-[#4B5563] text-sm border-b border-gray-100">
+                      <tr>
+                        <th className="px-6 py-4 font-semibold">Nome</th>
+                        <th className="px-6 py-4 font-semibold">Telefone</th>
+                        <th className="px-6 py-4 font-semibold">Veículo</th>
+                        <th className="px-6 py-4 font-semibold">Placa</th>
+                        <th className="px-6 py-4 font-semibold">Status</th>
+                        <th className="px-6 py-4 font-semibold">Link do App</th>
+                        <th className="px-6 py-4 font-semibold text-right">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 text-sm">
+                      {drivers.map(d => (
+                        <tr key={d.id} className="hover:bg-gray-50/80 transition-colors">
+                          <td className="px-6 py-4 font-bold text-[#1F2421]">{d.name}</td>
+                          <td className="px-6 py-4 text-[#4B5563] font-medium">{d.phone}</td>
+                          <td className="px-6 py-4 text-[#4B5563] font-medium">{d.vehicle}</td>
+                          <td className="px-6 py-4">
+                            <span className="font-mono font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded text-xs">{d.licensePlate}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            {d.status === 'online' ? (
+                              <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 w-max">
+                                <span className="w-2 h-2 rounded-full bg-green-500"></span> Online
+                              </span>
+                            ) : (
+                              <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 w-max">
+                                <span className="w-2 h-2 rounded-full bg-gray-400"></span> Offline
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <code className="text-xs text-brand-purple bg-brand-purple/10 px-2 py-1 rounded-lg">
+                                /entregador?id={d.id}
+                              </code>
+                              <button 
+                                onClick={() => {
+                                  navigator.clipboard?.writeText(`https://a-aigira.vercel.app/entregador?id=${d.id}`);
+                                  alert('Link copiado!');
+                                }}
+                                className="text-xs text-gray-500 hover:text-brand-purple font-bold border border-gray-200 px-2 py-1 rounded-lg hover:border-brand-purple transition-colors"
+                              >
+                                Copiar
+                              </button>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button onClick={() => alert(`Editar ${d.name}`)} className="text-brand-purple hover:underline font-bold text-xs">Editar</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead className="bg-gray-50 text-[#4B5563] text-sm border-b border-gray-100">
-                    <tr>
-                      <th className="px-6 py-4 font-semibold">Nome</th>
-                      <th className="px-6 py-4 font-semibold">Telefone</th>
-                      <th className="px-6 py-4 font-semibold">Veículo</th>
-                      <th className="px-6 py-4 font-semibold">Placa</th>
-                      <th className="px-6 py-4 font-semibold">Status</th>
-                      <th className="px-6 py-4 font-semibold text-right">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 text-sm">
-                    {drivers.map(d => (
-                      <tr key={d.id} className="hover:bg-gray-50/80 transition-colors">
-                        <td className="px-6 py-4 font-bold text-[#1F2421]">{d.name}</td>
-                        <td className="px-6 py-4 text-[#4B5563] font-medium">{d.phone}</td>
-                        <td className="px-6 py-4 text-[#4B5563] font-medium">{d.vehicle}</td>
-                        <td className="px-6 py-4 font-mono font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded inline-block mt-3 ml-6">{d.licensePlate}</td>
-                        <td className="px-6 py-4">
-                          {d.status === 'online' ? (
-                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 w-max">
-                              <span className="w-2 h-2 rounded-full bg-green-500"></span> Online
-                            </span>
-                          ) : (
-                            <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 w-max">
-                              <span className="w-2 h-2 rounded-full bg-gray-400"></span> Offline
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <button onClick={() => alert(`Editar ${d.name}`)} className="text-brand-purple hover:underline font-bold text-xs mr-3">Editar</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            )}
+
+            {/* SUB-TAB: CADASTRO */}
+            {driverSubTab === 'cadastro' && (
+              <div className="max-w-2xl space-y-6">
+                {!generatedLink ? (
+                  <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-8 space-y-6">
+                    <div>
+                      <h2 className="text-xl font-bold text-[#1F2421] mb-1">Dados do Entregador</h2>
+                      <p className="text-sm text-[#4B5563]">Preencha os dados abaixo. Ao salvar, será gerado um link exclusivo para ele acessar o app.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="col-span-1 md:col-span-2">
+                        <label className="block text-sm font-bold text-[#1F2421] mb-2">Nome Completo *</label>
+                        <input 
+                          type="text"
+                          value={newDriver.name}
+                          onChange={e => setNewDriver(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="Ex: Carlos da Silva"
+                          className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-bold text-[#1F2421] mb-2">Telefone / WhatsApp *</label>
+                        <input 
+                          type="text"
+                          value={newDriver.phone}
+                          onChange={e => setNewDriver(prev => ({ ...prev, phone: e.target.value }))}
+                          placeholder="(11) 99999-9999"
+                          className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-bold text-[#1F2421] mb-2">Placa da Moto *</label>
+                        <input 
+                          type="text"
+                          value={newDriver.licensePlate}
+                          onChange={e => setNewDriver(prev => ({ ...prev, licensePlate: e.target.value.toUpperCase() }))}
+                          placeholder="ABC-1234"
+                          className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-mono font-bold text-[#1F2421] uppercase focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple"
+                        />
+                      </div>
+
+                      <div className="col-span-1 md:col-span-2">
+                        <label className="block text-sm font-bold text-[#1F2421] mb-2">Veículo</label>
+                        <input 
+                          type="text"
+                          value={newDriver.vehicle}
+                          onChange={e => setNewDriver(prev => ({ ...prev, vehicle: e.target.value }))}
+                          placeholder="Ex: Moto Honda CG 160"
+                          className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex justify-end gap-3">
+                      <button 
+                        onClick={() => setDriverSubTab('lista')}
+                        className="px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                      <button 
+                        onClick={() => {
+                          if (!newDriver.name || !newDriver.phone || !newDriver.licensePlate) {
+                            alert('Preencha nome, telefone e placa para continuar!');
+                            return;
+                          }
+                          const newId = `d${Date.now()}`;
+                          const link = `https://a-aigira.vercel.app/entregador?id=${newId}`;
+                          setDrivers(prev => [...prev, {
+                            id: newId,
+                            name: newDriver.name,
+                            phone: newDriver.phone,
+                            vehicle: newDriver.vehicle || 'Não informado',
+                            licensePlate: newDriver.licensePlate,
+                            status: 'offline'
+                          }]);
+                          setGeneratedLink(link);
+                        }}
+                        className="bg-brand-purple text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-purple/90 transition-colors shadow-md"
+                      >
+                        Cadastrar e Gerar Link
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* SUCCESS: Link Generated */
+                  <div className="bg-white border-2 border-green-200 shadow-sm rounded-2xl p-8 text-center space-y-6">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                      <CheckCircle2 className="text-green-600" size={44} />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-black text-[#1F2421] mb-1">Entregador Cadastrado! 🎉</h2>
+                      <p className="text-[#4B5563] text-sm">Compartilhe o link abaixo com <strong>{newDriver.name}</strong>. Ao acessar, ele já entra direto no app de entregas.</p>
+                    </div>
+
+                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 space-y-3">
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Link Exclusivo do Entregador</p>
+                      <div className="bg-brand-purple/10 border border-brand-purple/30 rounded-xl px-4 py-3 break-all">
+                        <code className="text-brand-purple font-bold text-sm">{generatedLink}</code>
+                      </div>
+                      <div className="flex gap-3 justify-center">
+                        <button 
+                          onClick={() => {
+                            navigator.clipboard?.writeText(generatedLink);
+                            alert('Link copiado para a área de transferência!');
+                          }}
+                          className="flex-1 bg-brand-purple text-white py-3 rounded-xl font-bold text-sm hover:bg-brand-purple/90 transition-colors shadow-md"
+                        >
+                          📋 Copiar Link
+                        </button>
+                        <button 
+                          onClick={() => {
+                            window.open(`https://wa.me/${newDriver.phone.replace(/\D/g,'')}?text=Olá ${newDriver.name}! Seu link de acesso ao app de entregas da Gira Açaí é: ${generatedLink}`, '_blank');
+                          }}
+                          className="flex-1 bg-[#25D366] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-md"
+                        >
+                          📲 Enviar por WhatsApp
+                        </button>
+                      </div>
+                    </div>
+
+                    <button 
+                      onClick={() => { setDriverSubTab('lista'); setGeneratedLink(null); }}
+                      className="text-sm font-bold text-[#4B5563] hover:text-brand-purple transition-colors"
+                    >
+                      ← Ver lista de entregadores
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
           </div>
         )}
 
