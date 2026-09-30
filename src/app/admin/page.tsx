@@ -17,11 +17,12 @@ import {
   ToggleLeft,
   ToggleRight,
   Printer,
-  Bike
+  Bike,
+  ShoppingBag
 } from 'lucide-react';
 
 export default function Admin() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'clientes' | 'entregadores' | 'configuracoes'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'clientes' | 'entregadores' | 'produtos' | 'configuracoes'>('dashboard');
 
   // Store Settings state
   const [storeIsOpen, setStoreIsOpen] = useState(true);
@@ -41,6 +42,14 @@ export default function Admin() {
   const [drivers, setDrivers] = useState([
     { id: 'd1', name: 'Carlos Motoboy', phone: '(11) 99999-1111', vehicle: 'Moto Honda CG', licensePlate: 'ABC-1234', status: 'online' },
     { id: 'd2', name: 'Roberto Entregas', phone: '(11) 98888-2222', vehicle: 'Moto Yamaha', licensePlate: 'XYZ-9876', status: 'offline' },
+  ]);
+
+  // Mock Products Data
+  const [products, setProducts] = useState([
+    { id: 'p1', name: 'Copo Açaí 300ml', category: 'Copos Tradicionais', price: 14.90, active: true },
+    { id: 'p2', name: 'Copo Açaí 500ml', category: 'Copos Tradicionais', price: 20.90, active: true },
+    { id: 'p3', name: 'Barca Gira Açaí 1L', category: 'Especiais', price: 45.00, active: true },
+    { id: 'p4', name: 'Água Mineral', category: 'Bebidas', price: 5.00, active: false },
   ]);
 
   // Mock hourly peak data for chart
@@ -109,6 +118,16 @@ export default function Admin() {
               }`}
             >
               <Bike size={18} /> Entregadores
+            </button>
+            <button 
+              onClick={() => setActiveTab('produtos')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                activeTab === 'produtos' 
+                  ? 'bg-brand-purple text-white shadow-md shadow-brand-purple/20' 
+                  : 'text-[#4B5563] hover:text-brand-purple hover:bg-gray-50'
+              }`}
+            >
+              <ShoppingBag size={18} /> Produtos (Cardápio)
             </button>
             <button 
               onClick={() => setActiveTab('configuracoes')}
@@ -352,7 +371,74 @@ export default function Admin() {
           </div>
         )}
 
-        {/* TAB 3: CONFIGURAÇÕES */}
+        {/* TAB 3: PRODUTOS */}
+        {activeTab === 'produtos' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-[#1F2421]">Produtos (Cardápio)</h1>
+                <p className="text-sm text-[#4B5563]">Gerencie os itens do seu cardápio, preços e disponibilidade</p>
+              </div>
+              <button onClick={() => alert('Simulação: Abrir modal de cadastro de novo produto')} className="bg-brand-orange text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-orange/90 transition-colors shadow-sm flex items-center gap-2">
+                + Novo Produto
+              </button>
+            </div>
+
+            <div className="bg-white border border-gray-100 shadow-sm rounded-2xl overflow-hidden">
+              <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h2 className="text-xl font-bold text-[#1F2421]">Itens Cadastrados</h2>
+                <div className="relative w-64">
+                  <input 
+                    type="text" 
+                    placeholder="Buscar produto..." 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 px-4 pl-9 text-xs text-[#1F2421] focus:outline-none focus:border-brand-purple"
+                  />
+                  <Search className="absolute left-3 top-2.5 text-gray-400" size={14} />
+                </div>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 text-[#4B5563] text-sm border-b border-gray-100">
+                    <tr>
+                      <th className="px-6 py-4 font-semibold">Nome do Produto</th>
+                      <th className="px-6 py-4 font-semibold">Categoria</th>
+                      <th className="px-6 py-4 font-semibold">Preço</th>
+                      <th className="px-6 py-4 font-semibold">Status (Visível)</th>
+                      <th className="px-6 py-4 font-semibold text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 text-sm">
+                    {products.map(p => (
+                      <tr key={p.id} className="hover:bg-gray-50/80 transition-colors">
+                        <td className="px-6 py-4 font-bold text-[#1F2421]">{p.name}</td>
+                        <td className="px-6 py-4 text-[#4B5563] font-medium">{p.category}</td>
+                        <td className="px-6 py-4 text-brand-purple font-bold">R$ {p.price.toFixed(2).replace('.', ',')}</td>
+                        <td className="px-6 py-4">
+                          {p.active ? (
+                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold w-max">
+                              Ativo
+                            </span>
+                          ) : (
+                            <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold w-max">
+                              Inativo
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button onClick={() => alert(`Editar ${p.name}`)} className="text-brand-purple hover:underline font-bold text-xs mr-3">Editar</button>
+                          <button onClick={() => alert(`Excluir ${p.name}`)} className="text-red-500 hover:underline font-bold text-xs">Excluir</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: CONFIGURAÇÕES */}
         {activeTab === 'configuracoes' && (
           <div className="space-y-6 max-w-4xl animate-in fade-in duration-300">
             <div>
