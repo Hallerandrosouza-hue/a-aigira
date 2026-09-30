@@ -26,6 +26,7 @@ import {
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'clientes' | 'entregadores' | 'produtos' | 'configuracoes'>('dashboard');
+  const [productSubTab, setProductSubTab] = useState<'prontos' | 'acompanhamentos'>('prontos');
 
   // Store Settings state
   const [storeIsOpen, setStoreIsOpen] = useState(true);
@@ -55,8 +56,17 @@ export default function Admin() {
     { id: 'p4', name: 'Água Mineral', category: 'Bebidas', price: 5.00, active: false, image: '' },
   ]);
 
+  // Mock Accompaniments Data
+  const [acompanhamentos, setAcompanhamentos] = useState([
+    { id: 'a1', name: 'Leite em Pó', type: 'Topping', weight: '50g', price: 2.00, active: true },
+    { id: 'a2', name: 'Morango', type: 'Fruta', weight: '100g', price: 3.50, active: true },
+    { id: 'a3', name: 'Nutella', type: 'Cobertura', weight: '30g', price: 4.00, active: true },
+    { id: 'a4', name: 'Açaí Tradicional', type: 'Base/Peso', weight: '300ml', price: 10.00, active: true },
+  ]);
+
   // Modal State for New Product
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [isAcompanhamentoModalOpen, setIsAcompanhamentoModalOpen] = useState(false);
 
   // Mock hourly peak data for chart
   const hourlyData = [
@@ -383,23 +393,45 @@ export default function Admin() {
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-3xl font-bold text-[#1F2421]">Produtos (Cardápio)</h1>
-                <p className="text-sm text-[#4B5563]">Gerencie os itens do seu cardápio, preços e disponibilidade</p>
+                <p className="text-sm text-[#4B5563]">Gerencie os açaís prontos e os adicionais do montador</p>
               </div>
               <button 
-                onClick={() => setIsProductModalOpen(true)} 
+                onClick={() => productSubTab === 'prontos' ? setIsProductModalOpen(true) : setIsAcompanhamentoModalOpen(true)} 
                 className="bg-brand-orange text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-orange/90 transition-colors shadow-sm flex items-center gap-2"
               >
-                + Novo Produto
+                + {productSubTab === 'prontos' ? 'Novo Açaí Pronto' : 'Novo Adicional / Peso'}
+              </button>
+            </div>
+
+            {/* Sub-tabs */}
+            <div className="flex bg-white rounded-xl shadow-sm border border-gray-100 p-1 w-max">
+              <button
+                onClick={() => setProductSubTab('prontos')}
+                className={`px-6 py-2 rounded-lg text-sm font-bold transition-colors ${
+                  productSubTab === 'prontos' ? 'bg-brand-purple text-white shadow' : 'text-gray-500 hover:text-gray-800'
+                }`}
+              >
+                Açaís Prontos
+              </button>
+              <button
+                onClick={() => setProductSubTab('acompanhamentos')}
+                className={`px-6 py-2 rounded-lg text-sm font-bold transition-colors ${
+                  productSubTab === 'acompanhamentos' ? 'bg-brand-purple text-white shadow' : 'text-gray-500 hover:text-gray-800'
+                }`}
+              >
+                Acompanhamentos / Pesos
               </button>
             </div>
 
             <div className="bg-white border border-gray-100 shadow-sm rounded-2xl overflow-hidden">
               <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                <h2 className="text-xl font-bold text-[#1F2421]">Itens Cadastrados</h2>
+                <h2 className="text-xl font-bold text-[#1F2421]">
+                  {productSubTab === 'prontos' ? 'Itens Prontos Cadastrados' : 'Adicionais & Quantidades'}
+                </h2>
                 <div className="relative w-64">
                   <input 
                     type="text" 
-                    placeholder="Buscar produto..." 
+                    placeholder="Buscar..." 
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 px-4 pl-9 text-xs text-[#1F2421] focus:outline-none focus:border-brand-purple"
                   />
                   <Search className="absolute left-3 top-2.5 text-gray-400" size={14} />
@@ -407,51 +439,83 @@ export default function Admin() {
               </div>
               
               <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead className="bg-gray-50 text-[#4B5563] text-sm border-b border-gray-100">
-                    <tr>
-                      <th className="px-6 py-4 font-semibold w-16">Foto</th>
-                      <th className="px-6 py-4 font-semibold">Nome do Produto</th>
-                      <th className="px-6 py-4 font-semibold">Categoria</th>
-                      <th className="px-6 py-4 font-semibold">Preço</th>
-                      <th className="px-6 py-4 font-semibold">Status (Visível)</th>
-                      <th className="px-6 py-4 font-semibold text-right">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 text-sm">
-                    {products.map(p => (
-                      <tr key={p.id} className="hover:bg-gray-50/80 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-gray-200">
-                            {p.image ? (
-                              <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
-                            ) : (
-                              <ImageIcon className="text-gray-400" size={20} />
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 font-bold text-[#1F2421]">{p.name}</td>
-                        <td className="px-6 py-4 text-[#4B5563] font-medium">{p.category}</td>
-                        <td className="px-6 py-4 text-brand-purple font-bold">R$ {p.price.toFixed(2).replace('.', ',')}</td>
-                        <td className="px-6 py-4">
-                          {p.active ? (
-                            <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold w-max">
-                              Ativo
-                            </span>
-                          ) : (
-                            <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold w-max">
-                              Inativo
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <button onClick={() => alert(`Editar ${p.name}`)} className="text-brand-purple hover:underline font-bold text-xs mr-3">Editar</button>
-                          <button onClick={() => alert(`Excluir ${p.name}`)} className="text-red-500 hover:underline font-bold text-xs">Excluir</button>
-                        </td>
+                {productSubTab === 'prontos' ? (
+                  <table className="w-full text-left">
+                    <thead className="bg-gray-50 text-[#4B5563] text-sm border-b border-gray-100">
+                      <tr>
+                        <th className="px-6 py-4 font-semibold w-16">Foto</th>
+                        <th className="px-6 py-4 font-semibold">Nome do Produto</th>
+                        <th className="px-6 py-4 font-semibold">Categoria</th>
+                        <th className="px-6 py-4 font-semibold">Preço</th>
+                        <th className="px-6 py-4 font-semibold">Status</th>
+                        <th className="px-6 py-4 font-semibold text-right">Ações</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 text-sm">
+                      {products.map(p => (
+                        <tr key={p.id} className="hover:bg-gray-50/80 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-gray-200">
+                              {p.image ? (
+                                <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <ImageIcon className="text-gray-400" size={20} />
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 font-bold text-[#1F2421]">{p.name}</td>
+                          <td className="px-6 py-4 text-[#4B5563] font-medium">{p.category}</td>
+                          <td className="px-6 py-4 text-brand-purple font-bold">R$ {p.price.toFixed(2).replace('.', ',')}</td>
+                          <td className="px-6 py-4">
+                            {p.active ? (
+                              <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold w-max">Ativo</span>
+                            ) : (
+                              <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold w-max">Inativo</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button onClick={() => alert(`Editar ${p.name}`)} className="text-brand-purple hover:underline font-bold text-xs mr-3">Editar</button>
+                            <button onClick={() => alert(`Excluir ${p.name}`)} className="text-red-500 hover:underline font-bold text-xs">Excluir</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <table className="w-full text-left">
+                    <thead className="bg-gray-50 text-[#4B5563] text-sm border-b border-gray-100">
+                      <tr>
+                        <th className="px-6 py-4 font-semibold">Nome do Adicional/Peso</th>
+                        <th className="px-6 py-4 font-semibold">Tipo</th>
+                        <th className="px-6 py-4 font-semibold">Quantidade / Peso</th>
+                        <th className="px-6 py-4 font-semibold">Preço</th>
+                        <th className="px-6 py-4 font-semibold">Status</th>
+                        <th className="px-6 py-4 font-semibold text-right">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 text-sm">
+                      {acompanhamentos.map(a => (
+                        <tr key={a.id} className="hover:bg-gray-50/80 transition-colors">
+                          <td className="px-6 py-4 font-bold text-[#1F2421]">{a.name}</td>
+                          <td className="px-6 py-4 text-[#4B5563] font-medium">{a.type}</td>
+                          <td className="px-6 py-4 text-[#4B5563] font-medium">{a.weight}</td>
+                          <td className="px-6 py-4 text-brand-purple font-bold">{a.price === 0 ? 'Grátis' : `R$ ${a.price.toFixed(2).replace('.', ',')}`}</td>
+                          <td className="px-6 py-4">
+                            {a.active ? (
+                              <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold w-max">Ativo</span>
+                            ) : (
+                              <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold w-max">Inativo</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button onClick={() => alert(`Editar ${a.name}`)} className="text-brand-purple hover:underline font-bold text-xs mr-3">Editar</button>
+                            <button onClick={() => alert(`Excluir ${a.name}`)} className="text-red-500 hover:underline font-bold text-xs">Excluir</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>
@@ -605,6 +669,85 @@ export default function Admin() {
                 className="bg-brand-purple text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-purple/90 transition-colors shadow-md"
               >
                 Salvar Produto
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL NOVO ADICIONAL / PESO */}
+      {isAcompanhamentoModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h2 className="text-xl font-bold text-[#1F2421] flex items-center gap-2">
+                <Package className="text-brand-purple" size={24} /> Cadastrar Adicional / Peso
+              </h2>
+              <button 
+                onClick={() => setIsAcompanhamentoModalOpen(false)} 
+                className="text-gray-400 hover:bg-gray-200 hover:text-gray-600 p-2 rounded-xl transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="col-span-1 md:col-span-2">
+                  <label className="block text-sm font-bold text-[#1F2421] mb-2">Nome do Adicional</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ex: Leite Ninho, Morango, Base Tradicional..." 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-bold text-[#1F2421] mb-2">Tipo</label>
+                  <select className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple">
+                    <option>Fruta</option>
+                    <option>Topping / Crocante</option>
+                    <option>Cobertura / Calda</option>
+                    <option>Base / Tamanho</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-[#1F2421] mb-2">Preço (R$)</label>
+                  <input 
+                    type="text" 
+                    placeholder="0,00 (Deixe 0 para Grátis)" 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple"
+                  />
+                </div>
+
+                <div className="col-span-1 md:col-span-2">
+                  <label className="block text-sm font-bold text-[#1F2421] mb-2">Quantidade / Peso / Medida</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ex: 50g, 100ml, 1 colher..." 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Essa informação ajuda o cliente a saber a porção exata.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 border-t border-gray-100 flex items-center justify-end gap-3 bg-gray-50">
+              <button 
+                onClick={() => setIsAcompanhamentoModalOpen(false)} 
+                className="px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-200 rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={() => {
+                  alert('Simulação: Adicional salvo com sucesso!');
+                  setIsAcompanhamentoModalOpen(false);
+                }} 
+                className="bg-brand-purple text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-purple/90 transition-colors shadow-md"
+              >
+                Salvar Adicional
               </button>
             </div>
           </div>
