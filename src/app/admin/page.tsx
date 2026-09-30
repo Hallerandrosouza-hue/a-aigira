@@ -18,7 +18,10 @@ import {
   ToggleRight,
   Printer,
   Bike,
-  ShoppingBag
+  ShoppingBag,
+  X,
+  Image as ImageIcon,
+  Upload
 } from 'lucide-react';
 
 export default function Admin() {
@@ -46,11 +49,14 @@ export default function Admin() {
 
   // Mock Products Data
   const [products, setProducts] = useState([
-    { id: 'p1', name: 'Copo Açaí 300ml', category: 'Copos Tradicionais', price: 14.90, active: true },
-    { id: 'p2', name: 'Copo Açaí 500ml', category: 'Copos Tradicionais', price: 20.90, active: true },
-    { id: 'p3', name: 'Barca Gira Açaí 1L', category: 'Especiais', price: 45.00, active: true },
-    { id: 'p4', name: 'Água Mineral', category: 'Bebidas', price: 5.00, active: false },
+    { id: 'p1', name: 'Copo Açaí 300ml', category: 'Copos Tradicionais', price: 14.90, active: true, image: 'https://images.unsplash.com/photo-1590137537678-83193e25b121?w=500&q=80' },
+    { id: 'p2', name: 'Copo Açaí 500ml', category: 'Copos Tradicionais', price: 20.90, active: true, image: 'https://images.unsplash.com/photo-1550505095-81378a876115?w=500&q=80' },
+    { id: 'p3', name: 'Barca Gira Açaí 1L', category: 'Especiais', price: 45.00, active: true, image: 'https://images.unsplash.com/photo-1579954115545-a95711fe5922?w=500&q=80' },
+    { id: 'p4', name: 'Água Mineral', category: 'Bebidas', price: 5.00, active: false, image: '' },
   ]);
+
+  // Modal State for New Product
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   // Mock hourly peak data for chart
   const hourlyData = [
@@ -379,7 +385,10 @@ export default function Admin() {
                 <h1 className="text-3xl font-bold text-[#1F2421]">Produtos (Cardápio)</h1>
                 <p className="text-sm text-[#4B5563]">Gerencie os itens do seu cardápio, preços e disponibilidade</p>
               </div>
-              <button onClick={() => alert('Simulação: Abrir modal de cadastro de novo produto')} className="bg-brand-orange text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-orange/90 transition-colors shadow-sm flex items-center gap-2">
+              <button 
+                onClick={() => setIsProductModalOpen(true)} 
+                className="bg-brand-orange text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-orange/90 transition-colors shadow-sm flex items-center gap-2"
+              >
                 + Novo Produto
               </button>
             </div>
@@ -401,6 +410,7 @@ export default function Admin() {
                 <table className="w-full text-left">
                   <thead className="bg-gray-50 text-[#4B5563] text-sm border-b border-gray-100">
                     <tr>
+                      <th className="px-6 py-4 font-semibold w-16">Foto</th>
                       <th className="px-6 py-4 font-semibold">Nome do Produto</th>
                       <th className="px-6 py-4 font-semibold">Categoria</th>
                       <th className="px-6 py-4 font-semibold">Preço</th>
@@ -411,6 +421,15 @@ export default function Admin() {
                   <tbody className="divide-y divide-gray-100 text-sm">
                     {products.map(p => (
                       <tr key={p.id} className="hover:bg-gray-50/80 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-gray-200">
+                            {p.image ? (
+                              <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <ImageIcon className="text-gray-400" size={20} />
+                            )}
+                          </div>
+                        </td>
                         <td className="px-6 py-4 font-bold text-[#1F2421]">{p.name}</td>
                         <td className="px-6 py-4 text-[#4B5563] font-medium">{p.category}</td>
                         <td className="px-6 py-4 text-brand-purple font-bold">R$ {p.price.toFixed(2).replace('.', ',')}</td>
@@ -501,6 +520,96 @@ export default function Admin() {
         )}
 
       </main>
+
+      {/* MODAL NOVO PRODUTO */}
+      {isProductModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h2 className="text-xl font-bold text-[#1F2421] flex items-center gap-2">
+                <ShoppingBag className="text-brand-purple" size={24} /> Cadastrar Novo Produto
+              </h2>
+              <button 
+                onClick={() => setIsProductModalOpen(false)} 
+                className="text-gray-400 hover:bg-gray-200 hover:text-gray-600 p-2 rounded-xl transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-5">
+              {/* Image Upload Area */}
+              <div>
+                <label className="block text-sm font-bold text-[#1F2421] mb-2">Foto do Produto</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:bg-brand-purple/5 transition-colors cursor-pointer group">
+                  <div className="w-16 h-16 bg-brand-purple/10 text-brand-purple rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <Upload size={28} />
+                  </div>
+                  <p className="font-bold text-[#1F2421] text-sm mb-1">Clique para enviar ou arraste a imagem</p>
+                  <p className="text-xs text-gray-500">Formatos suportados: JPG, PNG (Tamanho ideal: 500x500px)</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="col-span-1 md:col-span-2">
+                  <label className="block text-sm font-bold text-[#1F2421] mb-2">Nome do Produto</label>
+                  <input 
+                    type="text" 
+                    placeholder="Ex: Copo Açaí 700ml" 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-bold text-[#1F2421] mb-2">Categoria</label>
+                  <select className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple">
+                    <option>Copos Tradicionais</option>
+                    <option>Especiais</option>
+                    <option>Bebidas</option>
+                    <option>Adicionais</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-[#1F2421] mb-2">Preço (R$)</label>
+                  <input 
+                    type="text" 
+                    placeholder="0,00" 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple"
+                  />
+                </div>
+
+                <div className="col-span-1 md:col-span-2">
+                  <label className="block text-sm font-bold text-[#1F2421] mb-2">Descrição (Opcional)</label>
+                  <textarea 
+                    placeholder="Descreva os ingredientes ou detalhes do produto..." 
+                    rows={3}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm text-[#1F2421] focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple resize-none"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 border-t border-gray-100 flex items-center justify-end gap-3 bg-gray-50">
+              <button 
+                onClick={() => setIsProductModalOpen(false)} 
+                className="px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-200 rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={() => {
+                  alert('Simulação: Produto salvo com sucesso!');
+                  setIsProductModalOpen(false);
+                }} 
+                className="bg-brand-purple text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-purple/90 transition-colors shadow-md"
+              >
+                Salvar Produto
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
