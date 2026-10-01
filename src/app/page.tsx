@@ -6,37 +6,44 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative pt-12 pb-20 md:pt-20 md:pb-32 overflow-hidden px-4 bg-[#F8F9FA]">
+      <section className="relative pt-16 pb-24 md:pt-28 md:pb-40 overflow-hidden px-4">
+        {/* Background: Team photo */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-pink/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-brand-orange/10 rounded-full blur-3xl" />
+          <img
+            src="/team.jpg"
+            alt="Equipe Gira Açaí"
+            className="w-full h-full object-cover object-top"
+          />
+          {/* Dark gradient overlay to keep text readable */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
         </div>
         
         <div className="container mx-auto max-w-5xl relative z-10 text-center">
-          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight leading-tight text-[#1F2421]">
-            Vem pro <span className="text-gradient-gira">melhor Açaí</span><br className="hidden md:block"/> da cidade!
+          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight leading-tight text-white drop-shadow-lg">
+            Vem pro <span className="text-brand-orange">melhor Açaí</span><br className="hidden md:block"/> da cidade!
           </h1>
-          <p className="text-lg md:text-xl text-[#4B5563] mb-10 max-w-2xl mx-auto font-medium">
+          <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto font-medium drop-shadow">
             Monte seu açaí do seu jeito, escolha seus acompanhamentos e peça de forma rápida e fácil.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 
               href="/montador" 
-              className="w-full sm:w-auto bg-brand-orange text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-orange/90 transition-transform transform hover:scale-105 flex items-center justify-center gap-2 shadow-md shadow-brand-orange/20"
+              className="w-full sm:w-auto bg-brand-orange text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-orange/90 transition-transform transform hover:scale-105 flex items-center justify-center gap-2 shadow-xl shadow-brand-orange/30"
             >
               Montar meu Açaí
               <ArrowRight size={20} />
             </Link>
             <Link 
               href="/cardapio" 
-              className="w-full sm:w-auto bg-white border border-gray-200 text-[#4B5563] px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-sm"
+              className="w-full sm:w-auto bg-white/20 backdrop-blur-sm border border-white/40 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/30 transition-colors shadow-lg"
             >
               Ver cardápio
             </Link>
           </div>
         </div>
       </section>
+
 
       {/* Como quer pedir */}
       <section className="py-12 bg-white px-4 border-y border-gray-100">
