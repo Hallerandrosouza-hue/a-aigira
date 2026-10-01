@@ -497,7 +497,27 @@ export default function Admin() {
                             </div>
                           </td>
                           <td className="px-6 py-4 text-right">
-                            <button onClick={() => alert(`Editar ${d.name}`)} className="text-brand-purple hover:underline font-bold text-xs">Editar</button>
+                            <div className="flex items-center justify-end gap-2">
+                              {d.status === 'em_rota' && (
+                                <button 
+                                  onClick={() => window.open(`https://wa.me/${d.phone.replace(/\D/g,'')}`, '_blank')}
+                                  className="bg-blue-50 text-blue-600 border border-blue-100 p-1.5 rounded-lg hover:bg-blue-100 transition-colors"
+                                  title={`Entregando ${d.currentOrder} - Falar no WhatsApp`}
+                                >
+                                  <Phone size={14} />
+                                </button>
+                              )}
+                              {d.status === 'livre' && (
+                                <button 
+                                  onClick={() => window.open(`https://wa.me/${d.phone.replace(/\D/g,'')}?text=Temos entregas pra você, ${d.name}! Pode pegar?`, '_blank')}
+                                  className="bg-[#25D366] text-white p-1.5 rounded-lg hover:opacity-90 transition-opacity"
+                                  title="Chamar para Entrega no WhatsApp"
+                                >
+                                  <Phone size={14} />
+                                </button>
+                              )}
+                              <button onClick={() => alert(`Editar ${d.name}`)} className="text-brand-purple hover:underline font-bold text-xs ml-2">Editar</button>
+                            </div>
                           </td>
                         </tr>
                       ))}
