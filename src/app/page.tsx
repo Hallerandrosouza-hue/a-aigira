@@ -6,19 +6,19 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative pt-16 pb-24 md:pt-28 md:pb-40 overflow-hidden px-4">
+      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden px-4">
         {/* Background: Team photo */}
         <div className="absolute inset-0 z-0">
           <img
             src="/team.jpg"
             alt="Equipe Gira Açaí"
-            className="w-full h-full object-cover object-top"
+            className="w-full h-full object-cover object-center"
           />
-          {/* Dark gradient overlay to keep text readable */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+          {/* Dark gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/65" />
         </div>
         
-        <div className="container mx-auto max-w-5xl relative z-10 text-center">
+        <div className="container mx-auto max-w-5xl relative z-10 text-center py-20">
           <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight leading-tight text-white drop-shadow-lg">
             Vem pro <span className="text-brand-orange">melhor Açaí</span><br className="hidden md:block"/> da cidade!
           </h1>
