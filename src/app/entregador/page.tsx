@@ -185,15 +185,24 @@ export default function EntregadorApp() {
                     </div>
 
                     {/* Address & Navigation */}
-                    <div className="flex gap-3 mb-4 bg-gray-50 p-3 rounded-xl">
-                      <MapPin className="text-brand-orange shrink-0 mt-0.5" size={20} />
-                      <div>
-                        <p className="text-sm font-bold text-gray-800">{delivery.address}</p>
-                        {delivery.complement && <p className="text-xs text-gray-600 mt-0.5">Compl: {delivery.complement}</p>}
-                        <button className="text-xs text-blue-600 font-bold flex items-center gap-1 mt-2">
-                          <Navigation size={12} /> Abrir no Maps
-                        </button>
+                    <div className="mb-4 space-y-2">
+                      <div className="flex gap-3 bg-gray-50 p-3 rounded-xl">
+                        <MapPin className="text-brand-orange shrink-0 mt-0.5" size={20} />
+                        <div className="flex-1">
+                          <p className="text-sm font-bold text-gray-800">{delivery.address}</p>
+                          {delivery.complement && <p className="text-xs text-gray-600 mt-0.5">Compl: {delivery.complement}</p>}
+                        </div>
                       </div>
+
+                      {/* BIG MAP BUTTON */}
+                      <a
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(delivery.address)}&travelmode=driving`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white py-3.5 rounded-xl font-black text-base transition-all shadow-lg shadow-blue-500/30"
+                      >
+                        <Navigation size={22} /> Abrir Rota no Maps
+                      </a>
                     </div>
 
                     {/* Payment Info */}
