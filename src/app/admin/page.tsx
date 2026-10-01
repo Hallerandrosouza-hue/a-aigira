@@ -47,8 +47,9 @@ export default function Admin() {
 
   // Mock Drivers Data
   const [drivers, setDrivers] = useState([
-    { id: 'd1', name: 'Carlos Motoboy', phone: '(11) 99999-1111', vehicle: 'Moto Honda CG', licensePlate: 'ABC-1234', status: 'online' },
-    { id: 'd2', name: 'Roberto Entregas', phone: '(11) 98888-2222', vehicle: 'Moto Yamaha', licensePlate: 'XYZ-9876', status: 'offline' },
+    { id: 'd1', name: 'Carlos Motoboy', phone: '(11) 99999-1111', vehicle: 'Moto Honda CG', licensePlate: 'ABC-1234', status: 'em_rota', currentOrder: '#812' },
+    { id: 'd2', name: 'Roberto Entregas', phone: '(11) 98888-2222', vehicle: 'Moto Yamaha', licensePlate: 'XYZ-9876', status: 'livre' },
+    { id: 'd3', name: 'João Express', phone: '(11) 97777-3333', vehicle: 'Moto Honda Biz', licensePlate: 'QWE-4321', status: 'offline' },
   ]);
 
   // Mock Products Data
@@ -264,6 +265,82 @@ export default function Admin() {
                 ))}
               </div>
             </div>
+
+            {/* Status da Frota (Entregadores) */}
+            <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-xl font-bold text-[#1F2421] flex items-center gap-2">
+                    <Bike className="text-brand-orange" size={24} /> Status da Frota
+                  </h2>
+                  <p className="text-sm text-[#4B5563]">Acompanhe seus entregadores em tempo real</p>
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#4B5563] bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                    {drivers.filter(d => d.status === 'em_rota').length} em Rota
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#4B5563] bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                    {drivers.filter(d => d.status === 'livre').length} Livres
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {drivers.map(d => (
+                  <div key={d.id} className="border border-gray-100 rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <p className="font-bold text-[#1F2421]">{d.name}</p>
+                        <p className="text-xs text-[#4B5563]">{d.vehicle} • {d.licensePlate}</p>
+                      </div>
+                      
+                      {d.status === 'em_rota' && (
+                        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1">
+                          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Em Rota
+                        </span>
+                      )}
+                      {d.status === 'livre' && (
+                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1">
+                          <span className="w-2 h-2 rounded-full bg-green-500"></span> Livre
+                        </span>
+                      )}
+                      {d.status === 'offline' && (
+                        <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold flex items-center gap-1">
+                          <span className="w-2 h-2 rounded-full bg-gray-400"></span> Offline
+                        </span>
+                      )}
+                    </div>
+                    
+                    {d.status === 'em_rota' ? (
+                      <div className="mt-2 pt-3 border-t border-gray-50">
+                        <p className="text-xs font-bold text-gray-500 mb-2">Entregando Pedido <span className="text-brand-purple">{d.currentOrder}</span></p>
+                        <button 
+                          onClick={() => window.open(`https://wa.me/${d.phone.replace(/\D/g,'')}`, '_blank')}
+                          className="w-full bg-blue-50 text-blue-600 border border-blue-100 py-2 rounded-lg font-bold text-xs hover:bg-blue-100 transition-colors flex items-center justify-center gap-1"
+                        >
+                          <Phone size={14} /> Falar com Entregador
+                        </button>
+                      </div>
+                    ) : d.status === 'livre' ? (
+                      <div className="mt-2 pt-3 border-t border-gray-50">
+                        <button 
+                          onClick={() => window.open(`https://wa.me/${d.phone.replace(/\D/g,'')}?text=Temos entregas pra você, ${d.name}! Pode pegar?`, '_blank')}
+                          className="w-full bg-[#25D366] text-white py-2 rounded-lg font-bold text-xs hover:opacity-90 transition-opacity flex items-center justify-center gap-1"
+                        >
+                          <Phone size={14} /> Chamar para Entrega
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="mt-2 pt-3 border-t border-gray-50">
+                        <p className="text-xs text-gray-400 text-center font-medium">Entregador Indisponível</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -387,11 +464,17 @@ export default function Admin() {
                             <span className="font-mono font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded text-xs">{d.licensePlate}</span>
                           </td>
                           <td className="px-6 py-4">
-                            {d.status === 'online' ? (
+                            {d.status === 'livre' && (
                               <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 w-max">
-                                <span className="w-2 h-2 rounded-full bg-green-500"></span> Online
+                                <span className="w-2 h-2 rounded-full bg-green-500"></span> Livre
                               </span>
-                            ) : (
+                            )}
+                            {d.status === 'em_rota' && (
+                              <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 w-max">
+                                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Em Rota
+                              </span>
+                            )}
+                            {d.status === 'offline' && (
                               <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 w-max">
                                 <span className="w-2 h-2 rounded-full bg-gray-400"></span> Offline
                               </span>
